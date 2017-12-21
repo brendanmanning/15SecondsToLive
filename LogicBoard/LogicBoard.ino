@@ -15,9 +15,15 @@ const float temperatureBaseline = 20.0;
 const int temperatureDelta = 0;
 
 /* Servo setup */
+int servoPin = 9;
+Servo servo;
+int servoAngle;
 
 void setup() {
+  servo.attach(servoPin);
   Serial.begin(9600);
+
+  servo.write(45);
 }
 
 void loop() {
@@ -26,4 +32,9 @@ void loop() {
   int temperatureDelta = analogRead(temperatureSensorPin);
   Serial.print("Sensor value: ");
   Serial.println(temperatureDelta);
+
+  servo.write(179);
+  delay(1500);
+  servo.write(0);
+  delay(1500);
 }
