@@ -5,7 +5,8 @@
 
 #include <Servo.h>
 
-
+#ifndef LOCK 
+#define LOCK
 class Lock {
   boolean locked;
   Servo servo;
@@ -15,4 +16,4 @@ class Lock {
     void unlock();
     bool isLocked();
 };
-    
+#endif

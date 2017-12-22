@@ -12,6 +12,7 @@
 /* Custom-made Library Imports */
 #include "Lock.h"
 #include "StatusIndicator.h"
+#include "Button.h"
 
 /* Temperature sensor setup */
 const int temperatureSensorPin = A0;
@@ -20,7 +21,7 @@ const int temperatureDelta = 0;
 
 Lock lock = Lock();
 StatusIndicator statusindicator = StatusIndicator();
-
+Button insideButton = Button();
 void setup() {
 
   Serial.begin(9600);
@@ -29,17 +30,36 @@ void setup() {
   lock.lock();
 
   statusindicator.init();
-  
+
+  insideButton.init(7);
+  insideButton.setCallback(&internalButtonOnClick);
+  insideButton.setLockObject(&lock);
 }
 
 void loop() {
 
+  // Listen for button presses
+  insideButton.tick();
+
   // Keep the status lights in sync
   if(lock.isLocked()) {
-    Serial.print("locked!");
     statusindicator.locked();
   } else {
     statusindicator.unlocked();
   }
   
 }
+
+/**
+ * Called every time the button is pressed
+ * 
+ * Should lock/unlock the door from the inside
+ */
+void internalButtonOnClick(Lock* lock) {
+  if(lock->isLocked()) {
+    lock->unlock();
+  } else {
+    lock->lock();
+  }
+}
+

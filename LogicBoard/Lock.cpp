@@ -22,7 +22,7 @@
 
   locked = false;
   
-  Serial.print("[ log ]: Lock initilized!");
+  Serial.println("[ log ]: Lock initilized!");
  }
 
  /**
@@ -31,14 +31,14 @@
   * (Also logs the action to the console
   */
  void Lock::lock() {
-  Serial.print("[ log ]: Locking...");
+  Serial.println("[ log ]: Locking...");
   
   servo.write(10);
   delay(1500);
 
   locked = true;
 
-  Serial.print(" [ log ]: Locked!");
+  Serial.println("[ log ]: Locked!");
  }
 
  /**
@@ -47,14 +47,14 @@
   * (Also logs the action to the console
   */
  void Lock::unlock() {
-  Serial.print("[ log ]: Unlocking...");
+  Serial.println("[ log ]: Unlocking...");
  
   servo.write(170);
   delay(1500);
 
   locked = false;
 
-  Serial.print(" [ log ]: Unlocked!");
+  Serial.println("[ log ]: Unlocked!");
  }
 
  /**

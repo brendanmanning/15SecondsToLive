@@ -1,13 +1,16 @@
 /**
  * Class definition/header for Button.cpp
  */
+#include "Lock.h"
 
  class Button {
   int pin;
-  void (*callback);
-
+  bool pressed;
+  void (*callback)(Lock*);
+  Lock* lock;
   public:
     void init(int);
-    void setCallback( void (*f) );
+    void setCallback( void (*f)(Lock*) );
+    void setLockObject(Lock*);
     void tick();
  };
