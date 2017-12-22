@@ -8,7 +8,7 @@
 
   int pin;
   
-  int temperature;
+  float temperature;
   float temperatureBaseline;
   
   int thresholdTemperatureHigh;
