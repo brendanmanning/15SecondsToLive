@@ -50,6 +50,9 @@ void loop() {
   } else {
     statusindicator.unlocked();
   }
+
+  // Check the temperature
+  temperaturesensor.tick();
   
 }
 
