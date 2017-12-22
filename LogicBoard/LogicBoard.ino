@@ -11,17 +11,15 @@
 
 /* Custom-made Library Imports */
 #include "Lock.h"
-#include "StatusIndicator.h"
+#include "TemperatureSensor.h"
 #include "Button.h"
-
-/* Temperature sensor setup */
-const int temperatureSensorPin = A0;
-const float temperatureBaseline = 20.0;
-const int temperatureDelta = 0;
+#include "StatusIndicator.h"
 
 Lock lock = Lock();
+TemperatureSensor temperaturesensor = TemperatureSensor();
 StatusIndicator statusindicator = StatusIndicator();
 Button insideButton = Button();
+
 void setup() {
 
   Serial.begin(9600);
@@ -34,6 +32,11 @@ void setup() {
   insideButton.init(7);
   insideButton.setCallback(&internalButtonOnClick);
   insideButton.setLockObject(&lock);
+
+  temperaturesensor.init(A0);
+  temperaturesensor.setUpperThreshold(100);
+  temperaturesensor.setCallback(&upperThresholdExceeded);
+  
 }
 
 void loop() {
@@ -62,4 +65,11 @@ void internalButtonOnClick(Lock* lock) {
     lock->lock();
   }
 }
+
+/**
+ * Called when the upper threshold temperature is exceeded
+ */
+ void upperThresholdExceeded(Lock* lock) {
+  lock->unlock();
+ }
 
