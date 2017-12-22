@@ -33,8 +33,7 @@ void loop() {
   Serial.print("Sensor value: ");
   Serial.println(temperatureDelta);
 
-  servo.write(179);
-  delay(1500);
   servo.write(0);
   delay(1500);
+
 }
