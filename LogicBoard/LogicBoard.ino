@@ -6,34 +6,40 @@
  * Code below is Copyright 2017 Brendan Manning. All rights reserved.
  */
 
-/* Library Imports */
+/* Arduino Library Imports */
 #include <Servo.h>
+
+/* Custom-made Library Imports */
+#include "Lock.h"
+#include "StatusIndicator.h"
 
 /* Temperature sensor setup */
 const int temperatureSensorPin = A0;
 const float temperatureBaseline = 20.0;
 const int temperatureDelta = 0;
 
-/* Servo setup */
-int servoPin = 9;
-Servo servo;
-int servoAngle;
+Lock lock = Lock();
+StatusIndicator statusindicator = StatusIndicator();
 
 void setup() {
-  servo.attach(servoPin);
+
   Serial.begin(9600);
 
-  servo.write(45);
+  lock.init(9);
+  lock.lock();
+
+  statusindicator.init();
+  
 }
 
 void loop() {
+
+  // Keep the status lights in sync
+  if(lock.isLocked()) {
+    Serial.print("locked!");
+    statusindicator.locked();
+  } else {
+    statusindicator.unlocked();
+  }
   
-  /* Read from the temperature sensor */
-  int temperatureDelta = analogRead(temperatureSensorPin);
-  Serial.print("Sensor value: ");
-  Serial.println(temperatureDelta);
-
-  servo.write(0);
-  delay(1500);
-
 }
