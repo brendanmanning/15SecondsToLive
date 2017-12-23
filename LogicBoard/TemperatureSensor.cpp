@@ -32,6 +32,13 @@
  }
 
  /**
+ * Set the lock object that is passed to the callback
+ */
+ void TemperatureSensor::setLockObject(Lock* l) {
+  lock = l;
+ }
+
+ /**
   * Checks if the temperature is above the safe threshold, and if it is, calls the callback
   * 
   * Should be called at the start loop()
@@ -39,18 +46,17 @@
  void TemperatureSensor::tick() {
 
   // Read the sensor's value
-  int sensorValue = analogRead(pin);
+  int sensorValue = analogRead(A0);
 
   // Convert to voltage
-  float voltage = (temperature/1024.0) * 5.0;
+  float voltage = (sensorValue/1024.0) * 5.0;
 
   // Convert to degrees centigrade
   float celcius = (voltage - .5) * 100;
 
   // Convert to fahrenheit
-  temperature = celcius * (5.0/9.0) + 32;
+  float temperature = (celcius * (9.0/5.0)) + 32;
 
-  Serial.print("Temperature: ");
   Serial.println(temperature);
 
   // Is this above the threshold value?

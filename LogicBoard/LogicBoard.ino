@@ -34,9 +34,9 @@ void setup() {
   insideButton.setLockObject(&lock);
 
   temperaturesensor.init(A0);
-  temperaturesensor.setUpperThreshold(100);
+  temperaturesensor.setUpperThreshold(80);
+  temperaturesensor.setLockObject(&lock);
   temperaturesensor.setCallback(&upperThresholdExceeded);
-  
 }
 
 void loop() {

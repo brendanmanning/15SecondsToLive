@@ -19,6 +19,9 @@ void Button::setCallback(void (*f)(Lock*) ) {
   callback = f;
 }
 
+/**
+ * Set the lock object that is passed to the callback
+ */
 void Button::setLockObject(Lock* l) {
   lock = l;
 }

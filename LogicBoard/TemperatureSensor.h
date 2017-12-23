@@ -8,7 +8,6 @@
 
   int pin;
   
-  float temperature;
   float temperatureBaseline;
   
   int thresholdTemperatureHigh;
@@ -20,6 +19,7 @@
     void init(int);
     void setUpperThreshold(int);
     void setCallback( void(*f)(Lock*) );
+    void setLockObject(Lock*);
     void tick();
  };
 
