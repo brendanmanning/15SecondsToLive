@@ -11,7 +11,7 @@ class Lock {
   boolean locked;
   Servo servo;
   public:
-    void init(int pin);
+    void init(int);
     void lock();
     void unlock();
     bool isLocked();

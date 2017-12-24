@@ -8,6 +8,7 @@
 
 /* Arduino Library Imports */
 #include <Servo.h>
+#include <LiquidCrystal.h>
 
 /* Custom-made Library Imports */
 #include "Lock.h"
@@ -22,12 +23,13 @@ Button insideButton = Button();
 
 void setup() {
 
-  Serial.begin(9600);
+  Serial.begin(9600); 
 
-  lock.init(9);
+  statusindicator.init(16,2);
+  statusindicator.setStatus("Booting");
+                                    
+  lock.init(8);
   lock.lock();
-
-  statusindicator.init();
 
   insideButton.init(7);
   insideButton.setCallback(&internalButtonOnClick);
@@ -37,6 +39,11 @@ void setup() {
   temperaturesensor.setUpperThreshold(80);
   temperaturesensor.setLockObject(&lock);
   temperaturesensor.setCallback(&upperThresholdExceeded);
+  temperaturesensor.setUpdateThreshold(1);
+  temperaturesensor.setUpdateCallback(&temperatureUpdated);
+  temperaturesensor.setStatusIndicatorObject(&statusindicator);
+
+  statusindicator.locked();
 }
 
 void loop() {
@@ -44,16 +51,27 @@ void loop() {
   // Listen for button presses
   insideButton.tick();
 
-  // Keep the status lights in sync
+ /* // Keep the status lights in sync
   if(lock.isLocked()) {
     statusindicator.locked();
   } else {
     statusindicator.unlocked();
-  }
+  }*/
 
   // Check the temperature
   temperaturesensor.tick();
-  
+
+}
+
+void serialEvent() {
+  Serial.print("[ serial data ]: ");
+  String s = "";
+  while(Serial.available()) 
+   {
+      char ch = Serial.read();
+      s+=ch;
+   }
+   Serial.print(s);
 }
 
 /**
@@ -64,9 +82,18 @@ void loop() {
 void internalButtonOnClick(Lock* lock) {
   if(lock->isLocked()) {
     lock->unlock();
+    statusindicator.unlocked();
   } else {
     lock->lock();
+    statusindicator.locked();
   }
+}
+
+/** Called when the temperature has advanced/descended by a fixed interval
+ *  
+ */
+void temperatureUpdated(int temperature, StatusIndicator* statusindicator) {
+  statusindicator->setTemperature(temperature);
 }
 
 /**
@@ -74,5 +101,6 @@ void internalButtonOnClick(Lock* lock) {
  */
  void upperThresholdExceeded(Lock* lock) {
   lock->unlock();
+  statusindicator.unlocked();
  }
 

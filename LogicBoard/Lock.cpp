@@ -18,7 +18,7 @@
   */
  void Lock::init(int pin) {
   servo = Servo();
-  servo.attach(9);
+  servo.attach(pin);
 
   locked = false;
   
