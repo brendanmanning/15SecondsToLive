@@ -15,28 +15,31 @@
 #include "TemperatureSensor.h"
 #include "Button.h"
 #include "StatusIndicator.h"
+#include "PasswordPad.h"
 
+/* Setup objects for custom actions */
 Lock lock = Lock();
 TemperatureSensor temperaturesensor = TemperatureSensor();
 StatusIndicator statusindicator = StatusIndicator();
 Button insideButton = Button();
+PasswordPad pad = PasswordPad();
 
 void setup() {
 
   Serial.begin(9600); 
 
   statusindicator.init(16,2);
-  statusindicator.setStatus("Booting");
+ // statusindicator.setStatus("Booting");
                                     
-  lock.init(8);
+  lock.init(13);
   lock.lock();
 
-  insideButton.init(7);
+  insideButton.init(12);
   insideButton.setCallback(&internalButtonOnClick);
   insideButton.setLockObject(&lock);
 
   temperaturesensor.init(A0);
-  temperaturesensor.setUpperThreshold(80);
+  temperaturesensor.setUpperThreshold(800);
   temperaturesensor.setLockObject(&lock);
   temperaturesensor.setCallback(&upperThresholdExceeded);
   temperaturesensor.setUpdateThreshold(1);
@@ -44,34 +47,28 @@ void setup() {
   temperaturesensor.setStatusIndicatorObject(&statusindicator);
 
   statusindicator.locked();
+
+  pad.setCallback(&correctPasswordEntered);
+  pad.setLockObject(&lock);
+  
 }
 
 void loop() {
-
+  
   // Listen for button presses
   insideButton.tick();
 
- /* // Keep the status lights in sync
+  // Keep the status lights in sync
   if(lock.isLocked()) {
-    statusindicator.locked();
+    statusindicator.locked(); 
   } else {
     statusindicator.unlocked();
-  }*/
+  }
 
   // Check the temperature
   temperaturesensor.tick();
 
-}
-
-void serialEvent() {
-  Serial.print("[ serial data ]: ");
-  String s = "";
-  while(Serial.available()) 
-   {
-      char ch = Serial.read();
-      s+=ch;
-   }
-   Serial.print(s);
+  pad.tick();
 }
 
 /**
@@ -80,12 +77,13 @@ void serialEvent() {
  * Should lock/unlock the door from the inside
  */
 void internalButtonOnClick(Lock* lock) {
+  Serial.println("Button pressed!");
   if(lock->isLocked()) {
     lock->unlock();
-    statusindicator.unlocked();
+    //statusindicator.unlocked();
   } else {
     lock->lock();
-    statusindicator.locked();
+    //statusindicator.locked();
   }
 }
 
@@ -93,7 +91,7 @@ void internalButtonOnClick(Lock* lock) {
  *  
  */
 void temperatureUpdated(int temperature, StatusIndicator* statusindicator) {
-  statusindicator->setTemperature(temperature);
+  //statusindicator->setTemperature(temperature);
 }
 
 /**
@@ -101,6 +99,13 @@ void temperatureUpdated(int temperature, StatusIndicator* statusindicator) {
  */
  void upperThresholdExceeded(Lock* lock) {
   lock->unlock();
-  statusindicator.unlocked();
+  //statusindicator.unlocked();
+ }
+
+/** 
+ *  Called when a key combination is entered
+ */
+ void correctPasswordEntered(Lock* lock) {
+  lock->unlock();
  }
 
